@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="result"></div>
+    <input id="input"></input>
+    <button id="button">Submit</button>
+    <script>
+      const input = document.getElementById("input");
+      const button = document.getElementById("button");
+      const result = document.getElementById("result");
+
+      button.addEventListener("click", () => {
+        let inputValue = input.value;
+
+        if(inputValue == "") {
+          return;
+        } 
+
+        fetch("http://localhost:3000/create-message", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: inputValue }),
+        })
+
+        input.value = "";
+      });
+
+      function queryMessages() {
+        fetch("http://localhost:3000/messages")
+          .then((response) => response.json())
+          .then((data) => {
+            result.innerHTML = "";
+            for (let i = 0; i < data.length; i++) {
+              const messageElement = document.createElement("div");
+              messageElement.innerHTML = data[i].message;
+              result.appendChild(messageElement);
+            }
+          });
+      }
+
+      setInterval(queryMessages, 100);
+    </script>
+  </body>
+</html>
